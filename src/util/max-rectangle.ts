@@ -1,3 +1,5 @@
+import { last } from 'lodash';
+
 interface Area {
   width: number;
   height: number;
@@ -10,45 +12,42 @@ const compare = function(a: Area, b: Area) {
   return a.height * a.width > b.height * b.width;
 };
 
-// Don't ask how this works, use the article above if you must know
-const maxRectangleRow = function(histogram: number[]) {
+// Don't ask how this works, use the article below if you must know
+const maxRectangleRow = function(histogram: number[], y: number) {
   const stack: Area[] = [];
-  const top = function() { return stack[stack.length - 1]; };
-  let max: Area = { height: 0, width: 0, x: -1, y: -1 };
-  let height;
-  let start;
-  let item;
-  let potential;
-  let pos;
+  let maxArea: Area = { height: 0, width: 0, x: 0, y: 0 };
+  let x;
 
-  for (pos = 0; pos < histogram.length; pos++) {
-    height = histogram[pos];
-    start = pos;
+  for (x = 0; x < histogram.length; x++) {
+    const height = histogram[x];
+    let currentX = x;
 
     while (true) {
-      if (!stack.length || height > top().height) {
-        stack.push({ height: height, width: 0, x: pos, y: -1 });
+      const item = last(stack);
+      if (!item || height > item.height) {
+        stack.push({ height: height, width: 0, x: currentX, y: y - (height - 1) });
       }
-      else if (stack.length > 0 && height < top().height) {
-        potential = { height: top().height, width: pos - top().x, x: top().x, y: -1 };
-        if (compare(potential, max)) {
-          max = potential;
+      else if (item && height < item.height) {
+        const area = { ...item, width: x - item.x };
+        if (compare(area, maxArea)) {
+          maxArea = area;
         }
-        start = (stack.pop() as Area).x;
+        stack.pop();
+        currentX = item.x;
         continue;
       }
       break;
     }
   }
 
-  for (start = 0; start < stack.length; start++) {
-    item = stack[start];
-    potential = { height: item.height, width: pos - item.x, x: item.x, y: -1 };
-    if (compare(potential, max)) {
-      max = potential;
+  for (let start = 0; start < stack.length; start++) {
+    const item = stack[start];
+    const area = { ...item, width: x - item.x };
+    if (compare(area, maxArea)) {
+      maxArea = area;
     }
   }
-  return max;
+  return maxArea;
 };
 
 // Finds the maximum size rectangle in a grid with obstructing cells
@@ -59,12 +58,11 @@ export default function maxRectangle(matrix: number[][]) {
   let max: Area = { height: 0, width: 0, x: -1, y: -1 };
   let histogram = matrix[0].map(() => 0);
   matrix.map(function(row, y) {
-    histogram = row.map(function(item, x) { return item ? 0 : histogram[x] + 1; });
-    const potential = maxRectangleRow(histogram);
+    histogram = row.map((hasWall, x) => hasWall ? 0 : histogram[x] + 1);
+    const potential = maxRectangleRow(histogram, y);
     if (compare(potential, max)) {
-      potential.y = y - (potential.height - 1);
       max = potential;
     }
   });
-  return max;
+  return max.width * max.height > 0 ? max : undefined;
 }
