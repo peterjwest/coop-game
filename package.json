@@ -1,0 +1,32 @@
+{
+  "name": "coop-game",
+  "version": "0.0.0",
+  "description": "An untitled co-op hack-and-slash game",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "lint-ts": "tslint --project tsconfig.json"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "1.0.0",
+    "copy-webpack-plugin": "4.6.0",
+    "sass-webpack-plugin": "1.0.3",
+    "ts-loader": "5.3.2",
+    "ts-node": "7.0.1",
+    "tslint": "5.12.0",
+    "tslint-eslint-rules": "5.4.0",
+    "tslint-loader": "3.6.0",
+    "tslint-react": "3.6.0",
+    "typescript": "3.2.2",
+    "webpack": "4.28.3",
+    "webpack-cli": "3.1.2",
+    "webpack-dev-server": "3.1.14"
+  },
+  "dependencies": {
+    "@types/lodash": "4.14.119",
+    "@types/pathfinding": "0.0.2",
+    "lodash": "4.17.11",
+    "pathfinding": "0.4.18"
+  }
+}
