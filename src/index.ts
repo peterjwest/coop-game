@@ -1,4 +1,5 @@
 import { Grid, JumpPointFinder, Util } from 'pathfinding';
+import maxRectangle from './util/max-rectangle';
 
 type Coord = [number, number];
 
@@ -40,19 +41,22 @@ function generateGrid(imageData: ImageData) {
     const y = Math.floor(n / imageData.width);
     grid[y][x] = imageData.data[n * 4] === 0 ? 1 : 0;
   }
-  return new Grid(grid);
+  return grid;
 }
 
-loadImageData('./images/map-subsample.png').then(generateGrid).then((grid) => {
+loadImageData('./images/map-subsample.png').then(generateGrid).then((rawGrid) => {
+  const grid = new Grid(rawGrid);
   const finder = JumpPointFinder({});
 
   const start: Coord = [96 / 8, 96 / 8];
   const end: Coord = [328 / 8, 328 / 8];
 
   let path;
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 5; i++) {
     const rawPath = finder.findPath(start[0], start[1], end[0], end[1], grid.clone());
     path = Util.smoothenPath(grid, rawPath);
   }
   console.log(path);
+
+  console.log(maxRectangle(rawGrid));
 });
