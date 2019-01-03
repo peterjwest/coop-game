@@ -2477,6 +2477,20 @@ neo-async@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
 
+ngraph.events@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/ngraph.events/-/ngraph.events-0.0.3.tgz#38f55316f3d207ad631ff94f6622ca8f2c0e87d0"
+
+ngraph.graph@0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/ngraph.graph/-/ngraph.graph-0.0.15.tgz#c19c4d66152cb8283655aef41e0e1afd6ba80278"
+  dependencies:
+    ngraph.events "0.0.3"
+
+ngraph.path@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/ngraph.path/-/ngraph.path-1.0.3.tgz#2ec2d97c55c7473e1c883eed7052917388d3b88d"
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"

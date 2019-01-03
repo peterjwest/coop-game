@@ -1,6 +1,6 @@
 import { last } from 'lodash';
 
-interface Area {
+export interface Area {
   width: number;
   height: number;
   x: number;
