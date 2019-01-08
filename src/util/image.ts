@@ -38,3 +38,7 @@ export function generateGrid(imageData: ImageData) {
   }
   return grid;
 }
+
+export function invertGrid(grid: number[][]) {
+  return grid.map((column) => column.map((value) => value === 0 ? 1 : 0));
+}
