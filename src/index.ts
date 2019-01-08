@@ -6,7 +6,7 @@ import { computeRooms, computeRoomGraph, findPath } from './pathfinding';
 loadImageData('./images/map.png').then(generateGrid).then((grid) => {
   const rooms = computeRooms(grid);
   const graph = computeRoomGraph(rooms);
-  findPath({ x: 336, y: 336 }, { x: 24, y: 24 }, rooms, graph);
+  const path = findPath({ x: 24, y: 24 }, { x: 336, y: 336 }, rooms, graph);
 
   const inverseGrid = invertGrid(grid);
   const walls = computeRooms(inverseGrid);
@@ -34,9 +34,9 @@ loadImageData('./images/map.png').then(generateGrid).then((grid) => {
     Bodies.rectangle(width / 2, height * 1.05, width * 1.2, height * 0.1, { isStatic: true }),
   ];
 
-  const droneWidth = 10;
-  const drone = Bodies.rectangle(50, 50, droneWidth * 1.2, droneWidth, {
-    restitution: 0.6,
+  const droneWidth = 6;
+  const drone = Bodies.circle(24, 24, droneWidth, {
+    restitution: 0.9,
     slop: 0.5,
     friction: 0.1,
     frictionStatic: 0,
@@ -55,54 +55,78 @@ loadImageData('./images/map.png').then(generateGrid).then((grid) => {
   Engine.run(engine);
   Render.run(renderer);
 
-  let forward = false;
-  let back = false;
+  let up = false;
+  let down = false;
   let left = false;
   let right = false;
 
   document.body.addEventListener('keydown', function(e) {
-    if (e.code === 'ArrowUp') { forward = true; }
-    if (e.code === 'ArrowDown') { back = true; }
-    if (e.code === 'ArrowLeft') { left = true; }
-    if (e.code === 'ArrowRight') { right = true; }
-    e.preventDefault();
+    if (e.code === 'ArrowUp') {
+      up = true;
+      e.preventDefault();
+    }
+    if (e.code === 'ArrowDown') {
+      down = true;
+      e.preventDefault();
+    }
+    if (e.code === 'ArrowLeft') {
+      left = true;
+      e.preventDefault();
+    }
+    if (e.code === 'ArrowRight') {
+      right = true;
+      e.preventDefault();
+    }
   });
 
   document.body.addEventListener('keyup', function(e) {
-    if (e.code === 'ArrowUp') { forward = false; }
-    if (e.code === 'ArrowDown') { back = false; }
-    if (e.code === 'ArrowLeft') { left = false; }
-    if (e.code === 'ArrowRight') { right = false; }
-    e.preventDefault();
+    if (e.code === 'ArrowUp') {
+      up = false;
+      e.preventDefault();
+    }
+    if (e.code === 'ArrowDown') {
+      down = false;
+      e.preventDefault();
+    }
+    if (e.code === 'ArrowLeft') {
+      left = false;
+      e.preventDefault();
+    }
+    if (e.code === 'ArrowRight') {
+      right = false;
+      e.preventDefault();
+    }
   });
 
-  function applyThrust(body: Body, thrust: number, offset: number) {
-    const thrustPosition = Vector.add(body.position, Vector.rotate({ x: offset, y: 0 }, body.angle + Math.PI / 2));
-    const thrustForce = Vector.rotate({ x: thrust, y: 0 }, body.angle);
-    Body.applyForce(body, thrustPosition, thrustForce);
+  function applyThrust(body: Body, thrust: number, angle: number) {
+    const thrustForce = Vector.rotate({ x: thrust, y: 0 }, angle);
+    Body.applyForce(body, body.position, thrustForce);
   }
 
+  let index = 0;
+
   setInterval(() => {
-    if (forward && left) {
-      applyThrust(drone, 0.009, droneWidth / 2);
-    } else if (forward && right) {
-      applyThrust(drone, 0.009, -droneWidth / 2);
-    } else if (back && left) {
-      applyThrust(drone, -0.009, droneWidth / 2);
-    } else if (back && right) {
-      applyThrust(drone, -0.009, -droneWidth / 2);
-    } else if (forward) {
-      applyThrust(drone, 0.006, droneWidth / 2);
-      applyThrust(drone, 0.006, -droneWidth / 2);
-    } else if (back) {
-      applyThrust(drone, -0.006, droneWidth / 2);
-      applyThrust(drone, -0.006, -droneWidth / 2);
-    } else if (left) {
-      applyThrust(drone, 0.006, droneWidth / 2);
-      applyThrust(drone, -0.006, -droneWidth / 2);
-    } else if (right) {
-      applyThrust(drone, -0.006, droneWidth / 2);
-      applyThrust(drone, 0.006, -droneWidth / 2);
+    if (up) {
+      applyThrust(drone, 0.02, - Math.PI / 2);
+    }
+    if (down) {
+      applyThrust(drone, 0.02, Math.PI / 2);
+    }
+    if (left) {
+      applyThrust(drone, 0.02, Math.PI);
+    }
+    if (right) {
+      applyThrust(drone, 0.02, 0);
+    }
+
+    if (index < path.length) {
+      const distance = Vector.sub(Vector.create(path[index].x, path[index].y), drone.position);
+      const angle = Vector.angle(Vector.create(1, 0), distance);
+      applyThrust(drone, 0.02, angle);
+
+      if (Vector.magnitude(distance) < 6) {
+        index++;
+      }
     }
   }, 1000 / 60);
 });
