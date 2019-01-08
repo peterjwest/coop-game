@@ -28,7 +28,6 @@
     "@types/pathfinding": "0.0.2",
     "lodash": "4.17.11",
     "ngraph.graph": "0.0.15",
-    "ngraph.path": "1.0.3",
-    "pathfinding": "0.4.18"
+    "ngraph.path": "1.0.3"
   }
 }
