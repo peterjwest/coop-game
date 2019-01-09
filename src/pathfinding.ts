@@ -130,7 +130,7 @@ export function findCurrentRoom(point: Point, rooms: Room[]) {
   ));
 }
 
-export function findPath(start: Point, end: Point, rooms: Room[], graph: Graph) {
+export function findPath(start: Point, end: Point, diameter: number, rooms: Room[], graph: Graph) {
   const startRoom = findCurrentRoom(start, rooms);
   const endRoom = findCurrentRoom(end, rooms);
   if (!startRoom || !endRoom) {
@@ -146,12 +146,15 @@ export function findPath(start: Point, end: Point, rooms: Room[], graph: Graph) 
   graph.removeNode('start');
   graph.removeNode('end');
 
-  return optimisePath(path);
+  return optimisePath(path, diameter / 2, 5);
 }
 
 // Adjusts paths
-function optimisePath(path: Array<RoomNode | ConnectionNode>) {
-  return path.map((b, i) => {
+function optimisePath(path: Array<RoomNode | ConnectionNode>, padding: number, times = 1): Array<RoomNode | ConnectionNode> {
+  if (times <= 0) {
+    return path;
+  }
+  return optimisePath(path.map((b, i) => {
     const a = path[i - 1];
     const c = path[i + 1];
     if (!a || !c || !('connection' in b)) {
@@ -164,14 +167,14 @@ function optimisePath(path: Array<RoomNode | ConnectionNode>) {
     // Vertical connection
     if (b.connection.start.x === b.connection.end.x) {
       const y = slope * b.x + intercept;
-      return { ...b, y: Math.min(b.connection.end.y, Math.max(b.connection.start.y, y)) };
+      return { ...b, y: Math.min(b.connection.end.y - padding, Math.max(b.connection.start.y + padding, y)) };
     }
     // Horizontal connection
     else {
       const x = (b.y - intercept) / slope;
-      return { ...b, x: Math.min(b.connection.end.x, Math.max(b.connection.start.x, x)) };
+      return { ...b, x: Math.min(b.connection.end.x - padding, Math.max(b.connection.start.x + padding, x)) };
     }
-  });
+  }), padding, times - 1);
 }
 
 function addPointToGraph(name: string, point: Point, room: Room, graph: Graph) {
