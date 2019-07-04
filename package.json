@@ -6,7 +6,9 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
-    "lint-ts": "tslint --project tsconfig.json"
+    "lint-ts": "tslint --project tsconfig.json",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "devDependencies": {
     "clean-webpack-plugin": "1.0.0",
@@ -30,6 +32,8 @@
     "lodash": "4.17.11",
     "matter-js": "0.14.2",
     "ngraph.graph": "0.0.15",
-    "ngraph.path": "1.0.3"
-  }
+    "ngraph.path": "1.0.3",
+    "snyk": "^1.189.0"
+  },
+  "snyk": true
 }
