@@ -27,7 +27,7 @@
     "@types/lodash": "4.14.119",
     "@types/matter-js": "0.10.2",
     "@types/pathfinding": "0.0.2",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "matter-js": "0.14.2",
     "ngraph.graph": "0.0.15",
     "ngraph.path": "1.0.3"
